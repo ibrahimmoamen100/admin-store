@@ -1,7 +1,7 @@
 import Stripe from "stripe";
-import {NextResponse} from "next/server";
+import { NextResponse } from "next/server";
 
-import {stripe} from "@/lib/stripe";
+import { stripe } from "@/lib/stripe";
 import prismadb from "@/lib/prismadb";
 
 const corsHeaders = {
@@ -11,14 +11,17 @@ const corsHeaders = {
 };
 
 export async function OPTIONS() {
-  return NextResponse.json({}, {headers: corsHeaders});
+  return NextResponse.json({}, { headers: corsHeaders });
 }
 
-export async function POST(req: Request, {params}: {params: {storeId: string}}) {
-  const {productIds} = await req.json();
+export async function POST(
+  req: Request,
+  { params }: { params: { storeId: string } }
+) {
+  const { productIds } = await req.json();
 
   if (!productIds || productIds.length === 0) {
-    return new NextResponse("Product ids are required", {status: 400});
+    return new NextResponse("Product ids are required", { status: 400 });
   }
 
   const products = await prismadb.product.findMany({
@@ -39,7 +42,7 @@ export async function POST(req: Request, {params}: {params: {storeId: string}}) 
         product_data: {
           name: product.name,
         },
-        unit_amount: product.price.toNumber() * 100,
+        unit_amount: product.price * 100,
       },
     });
   });
@@ -75,7 +78,7 @@ export async function POST(req: Request, {params}: {params: {storeId: string}}) 
   });
 
   return NextResponse.json(
-    {url: session.url},
+    { url: session.url },
     {
       headers: corsHeaders,
     }
