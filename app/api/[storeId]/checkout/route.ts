@@ -1,4 +1,7 @@
+import Stripe from "stripe";
 import { NextResponse } from "next/server";
+
+import { stripe } from "@/lib/stripe";
 import prismadb from "@/lib/prismadb";
 
 const corsHeaders = {
@@ -15,7 +18,7 @@ export async function POST(
   req: Request,
   { params }: { params: { storeId: string } }
 ) {
-  const { productIds, userPhoneNumber, userAddress } = await req.json();
+  const { productIds } = await req.json();
 
   if (!productIds || productIds.length === 0) {
     return new NextResponse("Product ids are required", { status: 400 });
@@ -29,31 +32,25 @@ export async function POST(
     },
   });
 
-  if (products.length === 0) {
-    return new NextResponse("No products found", { status: 404 });
-  }
+  const line_items: Stripe.Checkout.SessionCreateParams.LineItem[] = [];
 
-  // Format product details into a message
-  const productDetails = products
-    .map((product) => `${product.name} - $${product.price}`)
-    .join(", ");
+  products.forEach((product) => {
+    line_items.push({
+      quantity: 1,
+      price_data: {
+        currency: "USD",
+        product_data: {
+          name: product.name,
+        },
+        unit_amount: product.price * 100,
+      },
+    });
+  });
 
-  // WhatsApp message content
-  const message = `Hello, I would like to order the following products: ${productDetails}. My address is: ${userAddress}.`;
-
-  // Replace with the actual WhatsApp number you want to send the message to
-  const whatsappNumber = "201024911062"; // Example: +20 123 456 7890
-
-  // Construct the WhatsApp URL
-  const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(
-    message
-  )}`;
-
-  // Optionally, save the order to the database
-  await prismadb.order.create({
+  const order = await prismadb.order.create({
     data: {
       storeId: params.storeId,
-      isPaid: false, // Set as false since this isn't a Stripe transaction
+      isPaid: false,
       orderItems: {
         create: productIds.map((productId: string) => ({
           product: {
@@ -66,9 +63,42 @@ export async function POST(
     },
   });
 
-  // Return the WhatsApp URL for redirection
+  const session = await stripe.checkout.sessions.create({
+    line_items,
+    mode: "payment",
+    billing_address_collection: "required",
+    phone_number_collection: {
+      enabled: true,
+    },
+    success_url: `${process.env.FRONTEND_STORE_URL}/cart?success=1`,
+    cancel_url: `${process.env.FRONTEND_STORE_URL}/cart?canceled=1`,
+    metadata: {
+      orderId: order.id,
+    },
+  });
+
+  const productDetails = products
+    .map(
+      (product) => `  
+    ${product.name}
+    | 
+    ${product.price}  `
+    )
+    .join(", ");
+
+  // WhatsApp message content
+  const message = ` .....و عنواني هو  :${productDetails}: عاوز اشتري منتجات `;
+
+  // Replace with the actual WhatsApp number you want to send the message to
+  const whatsappNumber = "201234567890"; // Example: +20 123 456 7890
+
+  // Construct the WhatsApp URL
+  const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(
+    message
+  )}`;
+
   return NextResponse.json(
-    { url: whatsappUrl },
+    { stripeUrl: session.url, whatsappUrl: whatsappUrl },
     {
       headers: corsHeaders,
     }
