@@ -1,6 +1,5 @@
 import Stripe from "stripe";
 import { NextResponse } from "next/server";
-
 import { stripe } from "@/lib/stripe";
 import prismadb from "@/lib/prismadb";
 
@@ -18,7 +17,7 @@ export async function POST(
   req: Request,
   { params }: { params: { storeId: string } }
 ) {
-  const { productIds } = await req.json();
+  const { productIds, userPhoneNumber, userAddress } = await req.json();
 
   if (!productIds || productIds.length === 0) {
     return new NextResponse("Product ids are required", { status: 400 });
@@ -33,8 +32,10 @@ export async function POST(
   });
 
   const line_items: Stripe.Checkout.SessionCreateParams.LineItem[] = [];
+  let productDetails = "";
 
   products.forEach((product) => {
+    productDetails += `${product.name} - $${product.price}, `;
     line_items.push({
       quantity: 1,
       price_data: {
@@ -50,7 +51,7 @@ export async function POST(
   const order = await prismadb.order.create({
     data: {
       storeId: params.storeId,
-      isPaid: false,
+      isPaid: true,
       orderItems: {
         create: productIds.map((productId: string) => ({
           product: {
@@ -70,36 +71,19 @@ export async function POST(
     phone_number_collection: {
       enabled: true,
     },
-    success_url: `${process.env.FRONTEND_STORE_URL}/cart?success=1`,
+    success_url: `${process.env.FRONTEND_STORE_URL}/checkout-success?orderId=${
+      order.id
+    }&userPhoneNumber=${userPhoneNumber}&userAddress=${encodeURIComponent(
+      userAddress
+    )}&productDetails=${encodeURIComponent(productDetails)}`,
     cancel_url: `${process.env.FRONTEND_STORE_URL}/cart?canceled=1`,
     metadata: {
       orderId: order.id,
     },
   });
 
-  const productDetails = products
-    .map(
-      (product) => `  
-    ${product.name}
-    | 
-    $${product.price}  `
-    )
-    .join(", ");
-
-  // WhatsApp message content
-  const message = ` .....و عنواني هو  :${productDetails}: عاوز اشتري منتجات `;
-
-  // Replace with the actual WhatsApp number you want to send the message to
-  const whatsappNumber = "201234567890"; // Example: +20 123 456 7890
-
-  // Construct the WhatsApp URL
-  const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(
-    message
-  )}`;
-
   return NextResponse.json(
-    { url: session.url, whatsappUrl },
-
+    { url: session.url },
     {
       headers: corsHeaders,
     }
