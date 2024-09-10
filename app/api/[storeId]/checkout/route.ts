@@ -38,7 +38,7 @@ export async function POST(
     line_items.push({
       quantity: 1,
       price_data: {
-        currency: "USD",
+        currency: "EGP",
         product_data: {
           name: product.name,
         },
@@ -90,7 +90,7 @@ export async function POST(
   const message = ` .....و عنواني هو  :${productDetails}: عاوز اشتري منتجات `;
 
   // Replace with the actual WhatsApp number you want to send the message to
-  const whatsappNumber = "201234567890"; // Example: +20 123 456 7890
+  const whatsappNumber = "201024911062"; // Example: +20 123 456 7890
 
   // Construct the WhatsApp URL
   const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(
@@ -98,7 +98,7 @@ export async function POST(
   )}`;
 
   return NextResponse.json(
-    { url: session.url, whatsappUrl },
+    { url: session.url },
 
     {
       headers: corsHeaders,
