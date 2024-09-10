@@ -82,7 +82,7 @@ export async function POST(
       (product) => `  
     ${product.name}
     | 
-    ${product.price}  `
+    $${product.price}  `
     )
     .join(", ");
 
@@ -98,7 +98,8 @@ export async function POST(
   )}`;
 
   return NextResponse.json(
-    { stripeUrl: session.url, whatsappUrl: whatsappUrl },
+    { url: session.url, whatsappUrl },
+
     {
       headers: corsHeaders,
     }
