@@ -3,13 +3,13 @@ generator client {
 }
 
 datasource db {
-  provider     = "postgresql"
-  url          = env("DATABASE_URL")
-  relationMode = "prisma"
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  // directUrl = env("DIRECT_URL")
 }
 
 model Store {
-  id         String      @id @default(uuid()) @map("_id")
+  id         String      @id @default(uuid())
   name       String
   userId     String
   billboards Billboard[] @relation("StoreToBilboard")
@@ -23,7 +23,7 @@ model Store {
 }
 
 model Billboard {
-  id         String     @id @default(uuid()) @map("_id")
+  id         String     @id @default(uuid())
   storeId    String
   store      Store      @relation("StoreToBilboard", fields: [storeId], references: [id])
   label      String
@@ -36,7 +36,7 @@ model Billboard {
 }
 
 model Category {
-  id          String    @id @default(uuid()) @map("_id")
+  id          String    @id @default(uuid())
   storeId     String
   store       Store     @relation("StoreToCategory", fields: [storeId], references: [id])
   billboardId String
@@ -51,7 +51,7 @@ model Category {
 }
 
 model Size {
-  id        String    @id @default(uuid()) @map("_id")
+  id        String    @id @default(uuid())
   storeId   String
   store     Store     @relation("StoreToSize", fields: [storeId], references: [id])
   name      String
@@ -64,7 +64,7 @@ model Size {
 }
 
 model Color {
-  id        String    @id @default(uuid()) @map("_id")
+  id        String    @id @default(uuid())
   storeId   String
   store     Store     @relation("StoreToColor", fields: [storeId], references: [id])
   name      String
@@ -77,7 +77,7 @@ model Color {
 }
 
 model Product {
-  id         String   @id @default(uuid()) @map("_id")
+  id         String   @id @default(uuid())
   storeId    String
   store      Store    @relation("StoreToProduct", fields: [storeId], references: [id])
   categoryId String
@@ -104,7 +104,7 @@ model Product {
 }
 
 model Image {
-  id        String   @id @default(uuid()) @map("_id")
+  id        String   @id @default(uuid())
   productId String
   product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
   url       String
@@ -115,7 +115,7 @@ model Image {
 }
 
 model Order {
-  id         String      @id @default(uuid()) @map("_id")
+  id         String      @id @default(uuid())
   storeId    String
   store      Store       @relation("StoreToOrder", fields: [storeId], references: [id])
   orderItems OrderItem[]
@@ -129,7 +129,7 @@ model Order {
 }
 
 model OrderItem {
-  id        String  @id @default(uuid()) @map("_id")
+  id        String  @id @default(uuid())
   orderId   String
   order     Order   @relation(fields: [orderId], references: [id])
   productId String
