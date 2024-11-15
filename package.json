@@ -7,14 +7,12 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "postinstall": "prisma generate",
-    "migrate:reset": "dotenv -e .env.local -- npx prisma migrate reset",
-    "migrate:dev": "dotenv -e .env.local -- npx prisma migrate dev"
+    "postinstall": "prisma generate"
   },
   "dependencies": {
     "@clerk/nextjs": "^4.23.1",
     "@hookform/resolvers": "^3.1.1",
-    "@prisma/client": "^5.20.0",
+    "@prisma/client": "^5.0.0",
     "@radix-ui/react-checkbox": "^1.0.4",
     "@radix-ui/react-dialog": "^1.0.4",
     "@radix-ui/react-dropdown-menu": "^2.0.5",
@@ -37,10 +35,9 @@
     "eslint": "8.46.0",
     "eslint-config-next": "13.4.12",
     "lucide-react": "^0.263.1",
-    "next": "13.4.12",
+    "next": "^13.5.7",
     "next-cloudinary": "^4.16.3",
     "next-themes": "^0.2.1",
-    "pg": "^8.12.0",
     "postcss": "8.4.27",
     "react": "18.2.0",
     "react-dom": "18.2.0",
@@ -56,6 +53,6 @@
     "zustand": "^4.3.9"
   },
   "devDependencies": {
-    "prisma": "^5.20.0"
+    "prisma": "^5.0.0"
   }
 }
