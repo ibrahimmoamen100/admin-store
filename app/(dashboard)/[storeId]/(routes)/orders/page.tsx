@@ -60,12 +60,6 @@ const OrdersPage = async ({ params }: { params: { storeId: string } }) => {
     <div className="flex-col">
       <div className="flex-1 p-8 pt-6 space-y-4">
         <OrderClient data={formatedOrders} />
-        <button
-          onClick={() => handleDelete()}
-          className="px-4 py-2 text-white bg-red-600 rounded hover:bg-red-700"
-        >
-          Delete
-        </button>
       </div>
     </div>
   );
