@@ -69,7 +69,37 @@ export async function POST(
   });
 
   return NextResponse.json(
-    { message: "Order created successfully", orderId: order.id },
+    { message: "تم انشاء الطلب سنتواصل معاك قريبا", orderId: order.id },
     { status: 200, headers: corsHeaders }
   );
+}
+
+export async function DELETE(
+  req: Request,
+  { params }: { params: { orderId: string } }
+) {
+  // const { orderId } = params;
+
+  // if (!orderId) {
+  //   return new NextResponse("Order ID is required", {
+  //     status: 400,
+  //     headers: corsHeaders,
+  //   });
+  // }
+
+  try {
+    // Delete the order
+    const deletedOrder = await prismadb.order.deleteMany();
+
+    return NextResponse.json(
+      { message: "Order deleted successfully", deletedOrder },
+      { status: 200, headers: corsHeaders }
+    );
+  } catch (error) {
+    console.error("Error deleting order:", error);
+    return new NextResponse("Failed to delete order", {
+      status: 500,
+      headers: corsHeaders,
+    });
+  }
 }
