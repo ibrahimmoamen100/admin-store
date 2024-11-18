@@ -50,9 +50,9 @@ export async function POST(
       phone: customerDetails.phone,
 
       address: `
-      الاسم : ${customerDetails.country} -
-      العنوان:  ${customerDetails.address} -
-      المدينه: ${customerDetails.city} - 
+      الاسم : ${customerDetails.country} <br/>
+      العنوان:  ${customerDetails.address} <br/> |
+      المدينه: ${customerDetails.city} <br/> |
       `,
 
       orderItems: {
