@@ -19,11 +19,17 @@ export async function POST(
   const { productIds, customerDetails } = await req.json();
 
   if (!productIds || productIds.length === 0) {
-    return new NextResponse("Product ids are required", { status: 400 });
+    return new NextResponse("Product ids are required", {
+      status: 400,
+      headers: corsHeaders,
+    });
   }
 
   if (!customerDetails || !customerDetails.phone) {
-    return new NextResponse("Customer details are incomplete", { status: 400 });
+    return new NextResponse("Customer details are incomplete", {
+      status: 400,
+      headers: corsHeaders,
+    });
   }
 
   const products = await prismadb.product.findMany({
@@ -31,7 +37,10 @@ export async function POST(
   });
 
   if (!products || products.length === 0) {
-    return new NextResponse("Products not found", { status: 404 });
+    return new NextResponse("Products not found", {
+      status: 404,
+      headers: corsHeaders,
+    });
   }
 
   const order = await prismadb.order.create({
@@ -39,6 +48,7 @@ export async function POST(
       storeId: params.storeId,
       isPaid: true, // Adjust payment handling as per your requirements
       phone: customerDetails.phone,
+
       address: `
       الاسم : ${customerDetails.country} -
       العنوان:  ${customerDetails.address} -
@@ -60,6 +70,6 @@ export async function POST(
 
   return NextResponse.json(
     { message: "Order created successfully", orderId: order.id },
-    { status: 200 }
+    { status: 200, headers: corsHeaders }
   );
 }
