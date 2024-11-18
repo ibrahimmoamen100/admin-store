@@ -39,7 +39,12 @@ export async function POST(
       storeId: params.storeId,
       isPaid: true, // Adjust payment handling as per your requirements
       phone: customerDetails.phone,
-      address: `${customerDetails.address}, ${customerDetails.city} - الاسم : ${customerDetails.country}`,
+      address: `
+      الاسم : ${customerDetails.country} -
+      العنوان:  ${customerDetails.address} -
+      المدينه: ${customerDetails.city} - 
+      `,
+
       orderItems: {
         create: productIds.map((productId: string) => ({
           product: { connect: { id: productId } },
