@@ -1,6 +1,6 @@
 "use client";
 
-import { OrderColumn } from "./columns";
+import { OrderColumn, columns } from "./columns";
 
 import { Heading } from "@/components/ui/heading";
 import { Separator } from "@/components/ui/separator";
@@ -16,7 +16,7 @@ interface OrderClientProps {
 export const OrderClient: React.FC<OrderClientProps> = ({ data, storeId }) => {
   const handleDeleteAllOrders = async () => {
     try {
-      const response = await axios.delete(`/api/${storeId}/checkout`);
+      const response = await axios.delete(`/api/checkout?storeId=${storeId}`);
 
       if (response.status === 200) {
         toast.success("All orders deleted successfully");
@@ -43,7 +43,7 @@ export const OrderClient: React.FC<OrderClientProps> = ({ data, storeId }) => {
       >
         Delete All Orders
       </button>
-      <DataTable columns={[]} data={data} searchKey="products" />
+      <DataTable columns={columns} data={data} searchKey="products" />
     </>
   );
 };
