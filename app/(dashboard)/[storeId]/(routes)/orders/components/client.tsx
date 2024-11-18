@@ -16,7 +16,7 @@ interface OrderClientProps {
 export const OrderClient: React.FC<OrderClientProps> = ({ data, storeId }) => {
   const handleDeleteAllOrders = async () => {
     try {
-      const response = await axios.delete(`/api/checkout?storeId=${storeId}`);
+      const response = await axios.delete(`/api/${storeId}/checkout`);
 
       if (response.status === 200) {
         toast.success("All orders deleted successfully");
