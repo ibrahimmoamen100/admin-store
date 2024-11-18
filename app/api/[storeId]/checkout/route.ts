@@ -74,34 +74,29 @@ export async function POST(
   );
 }
 
-export async function DELETE(
-  req: Request,
-  { params }: { params: { orderId: string } }
-) {
-  const { orderId } = params;
+export async function DELETE(req: Request) {
+  const { searchParams } = new URL(req.url);
+  const storeId = searchParams.get("storeId");
 
-  if (!orderId) {
-    return new NextResponse("Order ID is required", {
-      status: 400,
-      headers: corsHeaders,
-    });
+  if (!storeId) {
+    return NextResponse.json(
+      { error: "Store ID is required" },
+      { status: 400 }
+    );
   }
 
   try {
-    // Delete the order
-    const deletedOrder = await prismadb.order.delete({
-      where: { id: orderId },
+    await prismadb.order.deleteMany({
+      where: {
+        storeId,
+      },
     });
-
-    return NextResponse.json(
-      { message: "Order deleted successfully", deletedOrder },
-      { status: 200, headers: corsHeaders }
-    );
+    return NextResponse.json({ message: "All orders deleted successfully" });
   } catch (error) {
-    console.error("Error deleting order:", error);
-    return new NextResponse("Failed to delete order", {
-      status: 500,
-      headers: corsHeaders,
-    });
+    console.error(error);
+    return NextResponse.json(
+      { error: "Failed to delete orders" },
+      { status: 500 }
+    );
   }
 }

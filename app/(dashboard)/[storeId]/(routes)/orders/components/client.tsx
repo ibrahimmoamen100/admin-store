@@ -1,6 +1,6 @@
 "use client";
 
-import { OrderColumn, columns } from "./columns";
+import { OrderColumn } from "./columns";
 
 import { Heading } from "@/components/ui/heading";
 import { Separator } from "@/components/ui/separator";
@@ -10,23 +10,23 @@ import axios from "axios";
 
 interface OrderClientProps {
   data: OrderColumn[];
+  storeId: string;
 }
 
-export const OrderClient: React.FC<OrderClientProps> = ({ data }) => {
-  // Function to delete an order
-  const handleDelete = async (orderId: string) => {
+export const OrderClient: React.FC<OrderClientProps> = ({ data, storeId }) => {
+  const handleDeleteAllOrders = async () => {
     try {
-      const response = await axios.delete(`/api/checkout?orderId=${orderId}`);
+      const response = await axios.delete(`/api/${storeId}/checkout`);
 
       if (response.status === 200) {
-        toast.success("Order deleted successfully");
-        // Optionally, refresh the page or filter out the deleted order
+        toast.success("All orders deleted successfully");
+        // Optionally, refresh the page or clear the orders from the state
       } else {
-        toast.error("Failed to delete order");
+        toast.error("Failed to delete all orders");
       }
     } catch (error) {
-      console.error("Error deleting order:", error);
-      toast.error("An error occurred while deleting the order");
+      console.error("Error deleting all orders:", error);
+      toast.error("An error occurred while deleting the orders");
     }
   };
 
@@ -37,25 +37,13 @@ export const OrderClient: React.FC<OrderClientProps> = ({ data }) => {
         description="Manage orders for your store"
       />
       <Separator />
-      <DataTable
-        columns={[
-          ...columns,
-          {
-            id: "actions",
-            header: "Actions",
-            cell: ({ row }) => (
-              <button
-                onClick={() => handleDelete(row.original.id)}
-                className="px-4 py-2 text-white bg-red-600 rounded hover:bg-red-700"
-              >
-                Delete
-              </button>
-            ),
-          },
-        ]}
-        data={data}
-        searchKey="products"
-      />
+      <button
+        onClick={handleDeleteAllOrders}
+        className="px-4 py-2 text-white bg-red-600 rounded hover:bg-red-700"
+      >
+        Delete All Orders
+      </button>
+      <DataTable columns={[]} data={data} searchKey="products" />
     </>
   );
 };

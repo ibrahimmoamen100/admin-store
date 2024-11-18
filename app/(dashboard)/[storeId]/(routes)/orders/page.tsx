@@ -1,8 +1,7 @@
 import { format } from "date-fns";
 import prismadb from "@/lib/prismadb";
 import { formatter } from "@/lib/utils";
-import axios from "axios";
-import { toast } from "react-hot-toast";
+
 import { OrderClient } from "./components/client";
 import { OrderColumn } from "./components/columns";
 
@@ -38,28 +37,11 @@ const OrdersPage = async ({ params }: { params: { storeId: string } }) => {
     isPaid: item.isPaid,
     createdAt: format(item.createdAt, "MMMM do, yyyy"),
   }));
-  const handleDelete = async () => {
-    try {
-      const response = await axios.delete(
-        `/api/checkout` // Adjust the endpoint if necessary
-      );
-
-      if (response.status === 200) {
-        toast.success("Order deleted successfully");
-        // Optionally, refresh the page or update the state to remove the deleted order from the UI
-      } else {
-        toast.error("Failed to delete order");
-      }
-    } catch (error) {
-      console.error("Error deleting order:", error);
-      toast.error("An error occurred while deleting the order");
-    }
-  };
 
   return (
     <div className="flex-col">
       <div className="flex-1 p-8 pt-6 space-y-4">
-        <OrderClient data={formatedOrders} />
+        <OrderClient data={formatedOrders} storeId={params.storeId} />
       </div>
     </div>
   );
