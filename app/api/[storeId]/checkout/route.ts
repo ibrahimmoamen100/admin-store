@@ -48,6 +48,11 @@ export async function POST(
     },
   });
 
+  await prismadb.product.updateMany({
+    where: { id: { in: productIds } },
+    data: { isArchived: true },
+  });
+
   return NextResponse.json(
     { message: "Order created successfully", orderId: order.id },
     { status: 200 }
