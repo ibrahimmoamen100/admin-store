@@ -1,7 +1,5 @@
-import Stripe from "stripe";
 import { NextResponse } from "next/server";
 
-import { stripe } from "@/lib/stripe";
 import prismadb from "@/lib/prismadb";
 
 const corsHeaders = {
@@ -39,7 +37,7 @@ export async function POST(
   const order = await prismadb.order.create({
     data: {
       storeId: params.storeId,
-      isPaid: false, // Adjust payment handling as per your requirements
+      isPaid: true, // Adjust payment handling as per your requirements
       phone: customerDetails.phone,
       address: `${customerDetails.address}, ${customerDetails.city}, ${customerDetails.country}`,
       orderItems: {
