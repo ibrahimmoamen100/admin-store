@@ -22,7 +22,7 @@ export async function POST(
     return new NextResponse("Product ids are required", { status: 400 });
   }
 
-  if (!customerDetails || !customerDetails.name || !customerDetails.phone) {
+  if (!customerDetails || !customerDetails.phone) {
     return new NextResponse("Customer details are incomplete", { status: 400 });
   }
 
