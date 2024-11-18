@@ -78,18 +78,20 @@ export async function DELETE(
   req: Request,
   { params }: { params: { orderId: string } }
 ) {
-  // const { orderId } = params;
+  const { orderId } = params;
 
-  // if (!orderId) {
-  //   return new NextResponse("Order ID is required", {
-  //     status: 400,
-  //     headers: corsHeaders,
-  //   });
-  // }
+  if (!orderId) {
+    return new NextResponse("Order ID is required", {
+      status: 400,
+      headers: corsHeaders,
+    });
+  }
 
   try {
     // Delete the order
-    const deletedOrder = await prismadb.order.deleteMany();
+    const deletedOrder = await prismadb.order.delete({
+      where: { id: orderId },
+    });
 
     return NextResponse.json(
       { message: "Order deleted successfully", deletedOrder },
