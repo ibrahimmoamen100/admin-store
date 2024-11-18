@@ -39,7 +39,7 @@ export async function POST(
       storeId: params.storeId,
       isPaid: true, // Adjust payment handling as per your requirements
       phone: customerDetails.phone,
-      address: `${customerDetails.address}, ${customerDetails.city}, ${customerDetails.country}`,
+      address: `${customerDetails.address}, ${customerDetails.city} - الاسم : ${customerDetails.country}`,
       orderItems: {
         create: productIds.map((productId: string) => ({
           product: { connect: { id: productId } },
@@ -50,7 +50,7 @@ export async function POST(
 
   await prismadb.product.updateMany({
     where: { id: { in: productIds } },
-    data: { isArchived: true },
+    data: { isArchived: false },
   });
 
   return NextResponse.json(
