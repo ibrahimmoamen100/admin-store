@@ -50,7 +50,7 @@ export async function POST(
       phone: customerDetails.phone,
 
       address: `
-      الاسم : ${customerDetails.country} 
+      الاسم : ${customerDetails.country} |
       العنوان:  ${customerDetails.address} |
       المدينه: ${customerDetails.city}  |
       `,
@@ -74,9 +74,14 @@ export async function POST(
   );
 }
 
-export async function DELETE(req: Request) {
-  const { searchParams } = new URL(req.url);
-  const storeId = searchParams.get("storeId");
+export async function DELETE(
+  req: Request,
+  { params }: { params: { storeId: string } }
+) {
+  console.log("Request URL:", req.url); // Logs the URL
+  console.log("Store ID:", params.storeId); // Logs the extracted storeId
+
+  const { storeId } = params;
 
   if (!storeId) {
     return NextResponse.json(
@@ -86,14 +91,22 @@ export async function DELETE(req: Request) {
   }
 
   try {
+    await prismadb.orderItem.deleteMany({
+      where: {
+        order: {
+          storeId,
+        },
+      },
+    });
     await prismadb.order.deleteMany({
       where: {
         storeId,
       },
     });
+
     return NextResponse.json({ message: "All orders deleted successfully" });
   } catch (error) {
-    console.error(error);
+    console.error("Error deleting orders:", error);
     return NextResponse.json(
       { error: "Failed to delete orders" },
       { status: 500 }

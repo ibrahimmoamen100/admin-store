@@ -15,6 +15,8 @@ interface OrderClientProps {
 
 export const OrderClient: React.FC<OrderClientProps> = ({ data, storeId }) => {
   const handleDeleteAllOrders = async () => {
+    console.log("store id from client " + storeId);
+
     try {
       const response = await axios.delete(`/api/${storeId}/checkout`);
 
